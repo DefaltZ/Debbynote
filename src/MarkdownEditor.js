@@ -3,6 +3,9 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import './styles.css';
 
+// Enable soft breaks (single newline = <br>)
+marked.setOptions({ breaks: true });
+
 // Helper: map token to class
 const tokenToClass = {
   '!a': 'md-highlight-red',
@@ -13,38 +16,25 @@ const tokenToClass = {
 
 // Parse textarea value into blocks for custom rendering
 function parseBlocks(text) {
-  const lines = text.split(/\r?\n/);
+  // Split into blocks by double newlines (hard break)
+  const rawBlocks = text.split(/\n{2,}/);
   const blocks = [];
-  let currentBlock = null;
 
-  lines.forEach((line, idx) => {
-    // Only match valid highlight tokens at the start of the line
-    const match = line.match(/^(!a|!r|!wb|!info)\s(.*)$/i);
+  rawBlocks.forEach(rawBlock => {
+    // Only match valid highlight tokens at the start of the block
+    const match = rawBlock.match(/^(!a|!r|!wb|!info)\s([\s\S]*)$/i);
     if (match) {
-      // Start a new highlight block
-      if (currentBlock) blocks.push(currentBlock);
-      currentBlock = {
+      blocks.push({
         type: 'highlight',
         token: match[1],
-        lines: [match[2]],
-      };
-    } else if (line.trim() === '') {
-      // Empty line: end current block
-      if (currentBlock) blocks.push(currentBlock);
-      currentBlock = null;
+        content: match[2],
+      });
+    } else if (rawBlock.trim() === '') {
       blocks.push({ type: 'empty' });
     } else {
-      if (currentBlock && currentBlock.type === 'highlight') {
-        currentBlock.lines.push(line);
-      } else {
-        if (!currentBlock) {
-          currentBlock = { type: 'normal', lines: [] };
-        }
-        currentBlock.lines.push(line);
-      }
+      blocks.push({ type: 'normal', content: rawBlock });
     }
   });
-  if (currentBlock) blocks.push(currentBlock);
   return blocks;
 }
 
@@ -55,13 +45,12 @@ function renderBlocks(blocks) {
         return '<br/>';
       } else if (block.type === 'highlight') {
         const cls = tokenToClass[block.token] || 'md-highlight-red';
-        // Join lines with <br/>
-        const content = block.lines.map(l => l.replace(/</g, '&lt;').replace(/>/g, '&gt;')).join('<br/>');
-        return `<span class="${cls}">${content}</span>`;
+        // Parse as markdown (block), then wrap in highlight span
+        const html = marked.parse(block.content);
+        return `<span class="${cls}">${html}</span>`;
       } else {
-        // Normal block, parse as markdown
-        const content = block.lines.join('\n');
-        return marked.parseInline(content);
+        // Normal block, parse as markdown (block)
+        return marked.parse(block.content);
       }
     })
     .join('');
@@ -85,7 +74,7 @@ function MarkdownEditor() {
         placeholder={
           'Type markdown here...\n' +
           'Start a line with !r, !a, !wb, or !info for highlights.\n' +
-          'Shift+Enter for soft break, Enter for hard break.'
+          'Enter or Shift+Enter for soft break, double Enter for hard break.'
         }
       />
       <div className="markdown-preview" dangerouslySetInnerHTML={{ __html: html }} />
