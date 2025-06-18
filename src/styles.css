@@ -316,4 +316,102 @@ body {
   .note-editor {
     height: 50%;
   }
+}
+
+/* --- Markdown Editor Styles --- */
+.markdown-editor-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  min-height: 0;
+}
+
+.markdown-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  height: 100vh;
+  font-size: 1rem;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  border: none;
+  border-right: 1px solid #e9ecef;
+  border-radius: 0;
+  padding: 2rem 1.5rem;
+  resize: none;
+  background: #fff;
+  transition: none;
+  box-shadow: none;
+}
+
+.markdown-input:focus {
+  outline: none;
+  border-color: #e9ecef;
+}
+
+.markdown-preview {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  height: 100vh;
+  background: #fff;
+  border-radius: 0;
+  border: none;
+  border-left: 1px solid #e9ecef;
+  padding: 2rem 1.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  box-shadow: none;
+}
+
+.md-highlight-red {
+  display: block;
+  background: #ffeaea;
+  color: #c0392b;
+  border-left: 5px solid #e74c3c;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.md-highlight-green {
+  display: block;
+  background: #eaffea;
+  color: #218c3a;
+  border-left: 5px solid #27ae60;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 6px;
+  font-weight: 500;
 } 
+
+.md-highlight-blue {
+  display: block;
+  background: #eaf0ff;
+  color: #2980b9;
+  border-left: 5px solid #3498db;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.md-highlight-yellow {
+  display: block;
+  background: #fff8e1;
+  color: #f1c40f;
+  border-left: 5px solid #f39c12;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border-radius: 6px;
+  font-weight: 500;
+}
