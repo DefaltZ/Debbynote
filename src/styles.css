@@ -392,12 +392,12 @@ body {
   margin: 0.5em 0;
   border-radius: 6px;
   font-weight: 500;
-} 
+}
 
 .md-highlight-blue {
   display: block;
-  background: #eaf0ff;
-  color: #2980b9;
+  background: #eaf4ff;
+  color: #1a4a7a;
   border-left: 5px solid #3498db;
   padding: 0.5em 1em;
   margin: 0.5em 0;
@@ -407,9 +407,9 @@ body {
 
 .md-highlight-yellow {
   display: block;
-  background: #fff8e1;
-  color: #f1c40f;
-  border-left: 5px solid #f39c12;
+  background: #fffbe6;
+  color: #b59f00;
+  border-left: 5px solid #f1c40f;
   padding: 0.5em 1em;
   margin: 0.5em 0;
   border-radius: 6px;

@@ -18,7 +18,8 @@ function parseBlocks(text) {
   let currentBlock = null;
 
   lines.forEach((line, idx) => {
-    const match = line.match(/^(![a-z]+)\s(.*)$/i);
+    // Only match valid highlight tokens at the start of the line
+    const match = line.match(/^(!a|!r|!wb|!info)\s(.*)$/i);
     if (match) {
       // Start a new highlight block
       if (currentBlock) blocks.push(currentBlock);
