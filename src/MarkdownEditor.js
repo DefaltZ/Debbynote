@@ -1,51 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import './styles.css';
 
-// Preprocess markdown to handle custom syntax
-function preprocessMarkdown(md) {
-  return md
-    .split('\n')
-    .map(line => {
-      if (line.startsWith('!a ')) {
-        // Argument higlight
-        return `<span class="md-highlight-red">${line.slice(3)}</span>`;
+// Helper: map token to class
+const tokenToClass = {
+  '!a': 'md-highlight-red',
+  '!r': 'md-highlight-green',
+  '!wb': 'md-highlight-blue',
+  '!info': 'md-highlight-yellow',
+};
 
-      } else if (line.startsWith('!r')) {
-        // rebuttal highlight
-        return `<span class="md-highlight-green">${line.slice(3)}</span>`;
+// Parse textarea value into blocks for custom rendering
+function parseBlocks(text) {
+  const lines = text.split(/\r?\n/);
+  const blocks = [];
+  let currentBlock = null;
 
-        //worldbuilding highlight
-      } else if (line.startsWith('!wb')) {
-        return `<span class="md-highlight-blue">${line.slice(3)}</span>`;
-
-        //other key piece of information highlight
-      } else if (line.startsWith('!info')) {
-        return `<span class="md-highlight-yellow">${line.slice(5)}</span>`;
+  lines.forEach((line, idx) => {
+    const match = line.match(/^(![a-z]+)\s(.*)$/i);
+    if (match) {
+      // Start a new highlight block
+      if (currentBlock) blocks.push(currentBlock);
+      currentBlock = {
+        type: 'highlight',
+        token: match[1],
+        lines: [match[2]],
+      };
+    } else if (line.trim() === '') {
+      // Empty line: end current block
+      if (currentBlock) blocks.push(currentBlock);
+      currentBlock = null;
+      blocks.push({ type: 'empty' });
+    } else {
+      if (currentBlock && currentBlock.type === 'highlight') {
+        currentBlock.lines.push(line);
+      } else {
+        if (!currentBlock) {
+          currentBlock = { type: 'normal', lines: [] };
+        }
+        currentBlock.lines.push(line);
       }
-      return line;
+    }
+  });
+  if (currentBlock) blocks.push(currentBlock);
+  return blocks;
+}
+
+function renderBlocks(blocks) {
+  return blocks
+    .map(block => {
+      if (block.type === 'empty') {
+        return '<br/>';
+      } else if (block.type === 'highlight') {
+        const cls = tokenToClass[block.token] || 'md-highlight-red';
+        // Join lines with <br/>
+        const content = block.lines.map(l => l.replace(/</g, '&lt;').replace(/>/g, '&gt;')).join('<br/>');
+        return `<span class="${cls}">${content}</span>`;
+      } else {
+        // Normal block, parse as markdown
+        const content = block.lines.join('\n');
+        return marked.parseInline(content);
+      }
     })
-    .join('\n');
+    .join('');
 }
 
 function MarkdownEditor() {
-  const [markdown, setMarkdown] = useState('');
+  const [value, setValue] = useState('');
+  const textareaRef = useRef(null);
 
   // Preprocess, then parse markdown
-  const processed = preprocessMarkdown(markdown);
-  const html = DOMPurify.sanitize(marked.parse(processed));
+  const blocks = parseBlocks(value);
+  const html = DOMPurify.sanitize(renderBlocks(blocks));
 
   return (
     <div className="markdown-editor-container">
       <textarea
         className="markdown-input"
-        value={markdown}
-        onChange={e => setMarkdown(e.target.value)}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        ref={textareaRef}
         placeholder={
           'Type markdown here...\n' +
-          'use !a to highlight an argument, !r to highlight a rebuttal, !wb to highlight a worldbuilding piece, !info to highlight a key piece of information' +
-          'Example:\n!r This is red.\n!g This is green.'
+          'Start a line with !r, !a, !wb, or !info for highlights.\n' +
+          'Shift+Enter for soft break, Enter for hard break.'
         }
       />
       <div className="markdown-preview" dangerouslySetInnerHTML={{ __html: html }} />
