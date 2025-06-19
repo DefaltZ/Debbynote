@@ -415,3 +415,40 @@ body {
   border-radius: 6px;
   font-weight: 500;
 }
+
+/* --- Toolbar Styles --- */
+.toolbar {
+  width: 100vw;
+  background: #f7f7fa;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar-btn {
+  background: #f7f7fa;
+  border: none;
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+  color: #444;
+}
+
+.toolbar-btn:hover {
+  background: #e0e0ef;
+  color: #222;
+}
+
+.toolbar-btn svg {
+  display: block;
+}
+
+/* --- End Toolbar Styles --- */

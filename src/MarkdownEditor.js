@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import Toolbar from './components/Toolbar';
 import './styles.css';
 
 // Enable soft breaks (single newline = <br>)
@@ -60,24 +61,60 @@ function MarkdownEditor() {
   const [value, setValue] = useState('');
   const textareaRef = useRef(null);
 
+  // Formatting handler
+  const handleFormat = (type) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = value.substring(0, start);
+    const selected = value.substring(start, end);
+    const after = value.substring(end);
+    let newText = '';
+    let cursorOffset = 0;
+    if (type === 'bold') {
+      newText = before + `**${selected || ''}**` + after;
+      cursorOffset = selected ? 4 : 6;
+    } else if (type === 'italic') {
+      newText = before + `*${selected || ''}*` + after;
+      cursorOffset = selected ? 2 : 7;
+    } else if (type === 'strike') {
+      newText = before + `~~${selected || ''}~~` + after;
+      cursorOffset = selected ? 4 : 9;
+    }
+    setValue(newText);
+    setTimeout(() => {
+      if (selected) {
+        textarea.selectionStart = start;
+        textarea.selectionEnd = end + cursorOffset;
+      } else {
+        textarea.selectionStart = textarea.selectionEnd = start + cursorOffset / 2;
+      }
+      textarea.focus();
+    }, 0);
+  };
+
   // Preprocess, then parse markdown
   const blocks = parseBlocks(value);
   const html = DOMPurify.sanitize(renderBlocks(blocks));
 
   return (
-    <div className="markdown-editor-container">
-      <textarea
-        className="markdown-input"
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        ref={textareaRef}
-        placeholder={
-          'Type markdown here...\n' +
-          'Start a line with !r, !a, !wb, or !info for highlights.\n' +
-          'Enter or Shift+Enter for soft break, double Enter for hard break.'
-        }
-      />
-      <div className="markdown-preview" dangerouslySetInnerHTML={{ __html: html }} />
+    <div className="markdown-editor-container" style={{ flexDirection: 'column', padding: 0 }}>
+      <Toolbar onFormat={handleFormat} />
+      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+        <textarea
+          className="markdown-input"
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          ref={textareaRef}
+          placeholder={
+            'Type markdown here...\n' +
+            'Start a line with !r, !a, !wb, or !info for highlights.\n' +
+            'Enter or Shift+Enter for soft break, double Enter for hard break.'
+          }
+        />
+        <div className="markdown-preview" dangerouslySetInnerHTML={{ __html: html }} />
+      </div>
     </div>
   );
 }
