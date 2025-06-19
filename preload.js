@@ -16,5 +16,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
   
   // Example: save file dialog
-  saveFile: (content) => ipcRenderer.invoke('dialog:saveFile', content)
+  saveFile: (content) => ipcRenderer.invoke('dialog:saveFile', content),
+
+  // Save file functionality
+  saveFile: (content) => ipcRenderer.invoke('save-file', content)
 }); 

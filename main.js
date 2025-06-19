@@ -1,8 +1,40 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const fs = require('fs');
 const path = require('path');
 
 // Keep a global reference of the window object
 let mainWindow;
+
+// Handle save file
+ipcMain.handle('save-file', async (event, content) => {
+  const win = BrowserWindow.getFocusedWindow();
+  const {filePath, canceled} = await dialog.showSaveDialog(win, {
+    title: 'Save Markdown File',
+    defaultPath: path.join(process.env.HOME || process.env.USERPROFILE, 'debbynotes', 'untitled.md'),
+    filters: [
+      { name: 'Markdown Files', extensions: ['md'] }
+    ],
+    properties: ['createDirectory']
+  });
+
+  if (canceled || !filePath) return false;
+  
+  try {
+    // Ensure the directory exists
+    const dirPath = path.dirname(filePath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    
+    // Write the file
+    await fs.promises.writeFile(filePath, content, 'utf8');
+    console.log('File saved successfully:', filePath);
+    return true;
+  } catch (error) {
+    console.error('Error saving file:', error);
+    return false;
+  }
+});
 
 function createWindow() {
   // Create the browser window
