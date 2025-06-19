@@ -452,3 +452,45 @@ body {
 }
 
 /* --- End Toolbar Styles --- */
+
+/* --- Resize Handle Styles --- */
+.resize-handle {
+  width: 6px;
+  background: #e0e0e0;
+  cursor: col-resize;
+  position: relative;
+  z-index: 10;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.resize-handle:hover {
+  background: #c0c0c0;
+}
+
+.resize-handle:active {
+  background: #a0a0a0;
+}
+
+.resize-handle::before {
+  content: '';
+  width: 2px;
+  height: 40px;
+  background: #999;
+  border-radius: 1px;
+  transition: background-color 0.2s;
+}
+
+.resize-handle:hover::before {
+  background: #666;
+}
+
+.resize-handle:active::before {
+  background: #444;
+}
+
+/* --- End Resize Handle Styles --- */
