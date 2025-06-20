@@ -349,6 +349,32 @@ body {
   --highlight-yellow-bg: #fffbe6;
   --highlight-yellow-text: #b59f00;
   --highlight-yellow-border: #f1c40f;
+  
+  /* British Parliamentary Debate Colors - Light Mode */
+  --debate-og1-bg: #f3e5f5;
+  --debate-og1-text: #4a148c;
+  --debate-og1-border: #9c27b0;
+  --debate-og2-bg: #f3e5f5;
+  --debate-og2-text: #4a148c;
+  --debate-og2-border: #9c27b0;
+  --debate-oo1-bg: #f3e5f5;
+  --debate-oo1-text: #4a148c;
+  --debate-oo1-border: #9c27b0;
+  --debate-oo2-bg: #f3e5f5;
+  --debate-oo2-text: #4a148c;
+  --debate-oo2-border: #9c27b0;
+  --debate-cg1-bg: #f3e5f5;
+  --debate-cg1-text: #4a148c;
+  --debate-cg1-border: #9c27b0;
+  --debate-cg2-bg: #f3e5f5;
+  --debate-cg2-text: #4a148c;
+  --debate-cg2-border: #9c27b0;
+  --debate-co1-bg: #f3e5f5;
+  --debate-co1-text: #4a148c;
+  --debate-co1-border: #9c27b0;
+  --debate-co2-bg: #f3e5f5;
+  --debate-co2-text: #4a148c;
+  --debate-co2-border: #9c27b0;
 }
 
 [data-theme="dark"] {
@@ -381,6 +407,32 @@ body {
   --highlight-yellow-bg: #3d3d1f;
   --highlight-yellow-text: #ffd43b;
   --highlight-yellow-border: #f1c40f;
+  
+  /* British Parliamentary Debate Colors - Dark Mode */
+  --debate-og1-bg: #2d1f3d;
+  --debate-og1-text: #e1bee7;
+  --debate-og1-border: #9c27b0;
+  --debate-og2-bg: #2d1f3d;
+  --debate-og2-text: #e1bee7;
+  --debate-og2-border: #9c27b0;
+  --debate-oo1-bg: #2d1f3d;
+  --debate-oo1-text: #e1bee7;
+  --debate-oo1-border: #9c27b0;
+  --debate-oo2-bg: #2d1f3d;
+  --debate-oo2-text: #e1bee7;
+  --debate-oo2-border: #9c27b0;
+  --debate-cg1-bg: #2d1f3d;
+  --debate-cg1-text: #e1bee7;
+  --debate-cg1-border: #9c27b0;
+  --debate-cg2-bg: #2d1f3d;
+  --debate-cg2-text: #e1bee7;
+  --debate-cg2-border: #9c27b0;
+  --debate-co1-bg: #2d1f3d;
+  --debate-co1-text: #e1bee7;
+  --debate-co1-border: #9c27b0;
+  --debate-co2-bg: #2d1f3d;
+  --debate-co2-text: #e1bee7;
+  --debate-co2-border: #9c27b0;
 }
 
 /* Apply theme colors */
@@ -610,3 +662,113 @@ body {
 }
 
 /* --- End Resize Handle Styles --- */
+
+/* --- British Parliamentary Debate Styles --- */
+.debate-og1,
+.debate-og2,
+.debate-oo1,
+.debate-oo2,
+.debate-cg1,
+.debate-cg2,
+.debate-co1,
+.debate-co2 {
+  display: block;
+  background: var(--debate-og1-bg);
+  color: var(--debate-og1-text);
+  margin: 0.05em 0;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.debate-og1 {
+  background: var(--debate-og1-bg);
+  color: var(--debate-og1-text);
+}
+
+.debate-og2 {
+  background: var(--debate-og2-bg);
+  color: var(--debate-og2-text);
+}
+
+.debate-oo1 {
+  background: var(--debate-oo1-bg);
+  color: var(--debate-oo1-text);
+}
+
+.debate-oo2 {
+  background: var(--debate-oo2-bg);
+  color: var(--debate-oo2-text);
+}
+
+.debate-cg1 {
+  background: var(--debate-cg1-bg);
+  color: var(--debate-cg1-text);
+}
+
+.debate-cg2 {
+  background: var(--debate-cg2-bg);
+  color: var(--debate-cg2-text);
+}
+
+.debate-co1 {
+  background: var(--debate-co1-bg);
+  color: var(--debate-co1-text);
+}
+
+.debate-co2 {
+  background: var(--debate-co2-bg);
+  color: var(--debate-co2-text);
+}
+
+/* Debate header - inside the border area */
+.debate-header {
+  background: var(--debate-og1-border);
+  color: white;
+  padding: 0.3em 0.6em;
+  
+  font-weight: 600;
+  font-size: 1.1em;
+  text-align: left;
+  border-radius: 6px 6px 0 0;
+}
+
+.debate-og1 .debate-header {
+  background: var(--debate-og1-border);
+}
+
+.debate-og2 .debate-header {
+  background: var(--debate-og2-border);
+}
+
+.debate-oo1 .debate-header {
+  background: var(--debate-oo1-border);
+}
+
+.debate-oo2 .debate-header {
+  background: var(--debate-oo2-border);
+}
+
+.debate-cg1 .debate-header {
+  background: var(--debate-cg1-border);
+}
+
+.debate-cg2 .debate-header {
+  background: var(--debate-cg2-border);
+}
+
+.debate-co1 .debate-header {
+  background: var(--debate-co1-border);
+}
+
+.debate-co2 .debate-header {
+  background: var(--debate-co2-border);
+}
+
+/* Debate content - below the header */
+.debate-content {
+  padding: 0.5em;
+}
+
+/* --- End British Parliamentary Debate Styles --- */

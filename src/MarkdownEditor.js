@@ -1,61 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 import Toolbar from './components/Toolbar';
+import { getMarkdownHtml } from './utils/markdownParser';
+import { handleBulletKeyDown } from './utils/bulletHandler';
+import { handleFormat } from './utils/formatHandler';
+import { handleSave } from './utils/saveHandler';
 import './styles.css';
-
-// Enable soft breaks (single newline = <br>)
-marked.setOptions({ breaks: true });
-
-// Helper: map token to class
-const tokenToClass = {
-  '!a': 'md-highlight-red',
-  '!r': 'md-highlight-green',
-  '!wb': 'md-highlight-blue',
-  '!info': 'md-highlight-yellow',
-};
-
-// Parse textarea value into blocks for custom rendering
-function parseBlocks(text) {
-  // Split into blocks by double newlines (hard break)
-  const rawBlocks = text.split(/\n{2,}/);
-  const blocks = [];
-
-  rawBlocks.forEach(rawBlock => {
-    // Only match valid highlight tokens at the start of the block
-    const match = rawBlock.match(/^(!a|!r|!wb|!info)\s([\s\S]*)$/i);
-    if (match) {
-      blocks.push({
-        type: 'highlight',
-        token: match[1],
-        content: match[2],
-      });
-    } else if (rawBlock.trim() === '') {
-      blocks.push({ type: 'empty' });
-    } else {
-      blocks.push({ type: 'normal', content: rawBlock });
-    }
-  });
-  return blocks;
-}
-
-function renderBlocks(blocks) {
-  return blocks
-    .map(block => {
-      if (block.type === 'empty') {
-        return '<br/>';
-      } else if (block.type === 'highlight') {
-        const cls = tokenToClass[block.token] || 'md-highlight-red';
-        // Parse as markdown (block), then wrap in highlight span
-        const html = marked.parse(block.content);
-        return `<span class="${cls}">${html}</span>`;
-      } else {
-        // Normal block, parse as markdown (block)
-        return marked.parse(block.content);
-      }
-    })
-    .join('');
-}
 
 function MarkdownEditor() {
   const [value, setValue] = useState('');
@@ -65,132 +14,18 @@ function MarkdownEditor() {
   const containerRef = useRef(null);
 
   // Formatting handler
-  const handleFormat = (type) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const before = value.substring(0, start);
-    const selected = value.substring(start, end);
-    const after = value.substring(end);
-    let newText = '';
-    let cursorOffset = 0;
-    if (type === 'bold') {
-      newText = before + `**${selected || ''}**` + after;
-      cursorOffset = selected ? 4 : 6;
-    } else if (type === 'italic') {
-      newText = before + `*${selected || ''}*` + after;
-      cursorOffset = selected ? 2 : 7;
-    } else if (type === 'strike') {
-      newText = before + `~~${selected || ''}~~` + after;
-      cursorOffset = selected ? 4 : 9;
-    }
-    setValue(newText);
-    setTimeout(() => {
-      if (selected) {
-        textarea.selectionStart = start;
-        textarea.selectionEnd = end + cursorOffset;
-      } else {
-        textarea.selectionStart = textarea.selectionEnd = start + cursorOffset / 2;
-      }
-      textarea.focus();
-    }, 0);
+  const onFormat = (type) => {
+    handleFormat(type, value, setValue);
   };
 
   // Save handler
-  const handleSave = async () => {
-    try {
-      if (!window.electronAPI) {
-        console.error('Electron API not available');
-        alert('Save functionality not available in this environment');
-        return;
-      }
-
-      const success = await window.electronAPI.saveFile(value);
-      if (success) {
-        console.log('File saved successfully');
-      } else {
-        console.log('Save was cancelled or failed');
-      }
-    } catch (error) {
-      console.error('Error saving file:', error);
-      alert('Error saving file: ' + error.message);
-    }
+  const onSave = async () => {
+    await handleSave(value);
   };
 
   // Auto-increment bullet handler
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      const textarea = e.target;
-      const cursorPos = textarea.selectionStart;
-      const lines = value.split('\n');
-      let currentLineIndex = 0;
-      let charCount = 0;
-      
-      // Find current line
-      for (let i = 0; i < lines.length; i++) {
-        if (charCount + lines[i].length >= cursorPos) {
-          currentLineIndex = i;
-          break;
-        }
-        charCount += lines[i].length + 1; // +1 for newline
-      }
-      
-      const currentLine = lines[currentLineIndex];
-      
-      // Check if current line is a list item
-      const bulletMatch = currentLine.match(/^(\s*)([-*+]\s+)(.+)$/);
-      const numberedMatch = currentLine.match(/^(\s*)(\d+\.\s+)(.+)$/);
-      
-      if (bulletMatch || numberedMatch) {
-        e.preventDefault();
-        
-        const match = bulletMatch || numberedMatch;
-        const indent = match[1];
-        const bullet = match[2];
-        const content = match[3];
-        
-        // If line is empty (just bullet), remove it and don't add new bullet
-        if (content.trim() === '') {
-          const newLines = [...lines];
-          newLines.splice(currentLineIndex, 1);
-          const newValue = newLines.join('\n');
-          setValue(newValue);
-          
-          // Set cursor to the position where the line was removed
-          setTimeout(() => {
-            const newPos = charCount - currentLine.length - 1;
-            textarea.setSelectionRange(newPos, newPos);
-            textarea.focus();
-          }, 0);
-          return;
-        }
-        
-        // Insert new bullet line
-        let newBullet;
-        if (bulletMatch) {
-          // For unordered lists, use same bullet type
-          newBullet = bullet;
-        } else {
-          // For ordered lists, increment the number
-          const number = parseInt(bullet);
-          newBullet = `${number + 1}. `;
-        }
-        
-        const newLine = indent + newBullet;
-        const newLines = [...lines];
-        newLines.splice(currentLineIndex + 1, 0, newLine);
-        const newValue = newLines.join('\n');
-        setValue(newValue);
-        
-        // Set cursor to the end of the new bullet line
-        setTimeout(() => {
-          const newPos = charCount + currentLine.length + 1 + newLine.length;
-          textarea.setSelectionRange(newPos, newPos);
-          textarea.focus();
-        }, 0);
-      }
-    }
+  const onKeyDown = (e) => {
+    handleBulletKeyDown(e, value, setValue);
   };
 
   // Resize handlers
@@ -237,9 +72,8 @@ function MarkdownEditor() {
     }
   }, [isResizing]);
 
-  // Preprocess, then parse markdown
-  const blocks = parseBlocks(value);
-  const html = DOMPurify.sanitize(renderBlocks(blocks));
+  // Get markdown HTML
+  const html = getMarkdownHtml(value);
 
   return (
     <div className="markdown-editor-container" style={{ flexDirection: 'column', padding: 0 }}>
@@ -262,7 +96,7 @@ function MarkdownEditor() {
             className="markdown-input"
             value={value}
             onChange={e => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onKeyDown={onKeyDown}
             ref={textareaRef}
             style={{ 
               width: '100%',
@@ -271,12 +105,7 @@ function MarkdownEditor() {
               border: 'none',
               outline: 'none'
             }}
-            placeholder={
-              'Type markdown here...\n' +
-              'Start a line with !r, !a, !wb, or !info for highlights.\n' +
-              'Enter or Shift+Enter for soft break, double Enter for hard break.\n' +
-              'Start lists with -, *, +, or 1. for auto-incrementing bullets.'
-            }
+            
           />
         </div>
         
