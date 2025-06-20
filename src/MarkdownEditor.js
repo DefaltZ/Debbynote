@@ -168,7 +168,6 @@ function MarkdownEditor() {
 
   return (
     <div className="markdown-editor-container" style={{ flexDirection: 'column', padding: 0 }}>
-      <Toolbar onFormat={handleFormat} onSave={handleSave} />
       <div 
         ref={containerRef}
         style={{ 

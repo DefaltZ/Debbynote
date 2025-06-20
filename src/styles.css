@@ -318,12 +318,122 @@ body {
   }
 }
 
+/* CSS Variables for theming */
+:root {
+  /* Light Mode Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7fa;
+  --bg-tertiary: #f8f9fa;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+  --border-color: #e9ecef;
+  --border-hover: #667eea;
+  --toolbar-bg: #f7f7fa;
+  --toolbar-btn-bg: #f7f7fa;
+  --toolbar-btn-hover: #e0e0ef;
+  --resize-handle-bg: #e0e0e0;
+  --resize-handle-hover: #c0c0c0;
+  --resize-indicator: #999;
+  --resize-indicator-hover: #666;
+  
+  /* Highlight Colors */
+  --highlight-red-bg: #ffeaea;
+  --highlight-red-text: #c0392b;
+  --highlight-red-border: #e74c3c;
+  --highlight-green-bg: #eaffea;
+  --highlight-green-text: #218c3a;
+  --highlight-green-border: #27ae60;
+  --highlight-blue-bg: #eaf4ff;
+  --highlight-blue-text: #1a4a7a;
+  --highlight-blue-border: #3498db;
+  --highlight-yellow-bg: #fffbe6;
+  --highlight-yellow-text: #b59f00;
+  --highlight-yellow-border: #f1c40f;
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Colors */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #333333;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --border-color: #404040;
+  --border-hover: #667eea;
+  --toolbar-bg: #2d2d2d;
+  --toolbar-btn-bg: #2d2d2d;
+  --toolbar-btn-hover: #404040;
+  --resize-handle-bg: #404040;
+  --resize-handle-hover: #555555;
+  --resize-indicator: #666;
+  --resize-indicator-hover: #888;
+  
+  /* Highlight Colors - Dark Mode */
+  --highlight-red-bg: #3d1f1f;
+  --highlight-red-text: #ff6b6b;
+  --highlight-red-border: #e74c3c;
+  --highlight-green-bg: #1f3d1f;
+  --highlight-green-text: #51cf66;
+  --highlight-green-border: #27ae60;
+  --highlight-blue-bg: #1f2f3d;
+  --highlight-blue-text: #74c0fc;
+  --highlight-blue-border: #3498db;
+  --highlight-yellow-bg: #3d3d1f;
+  --highlight-yellow-text: #ffd43b;
+  --highlight-yellow-border: #f1c40f;
+}
+
+/* Apply theme colors */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Toolbar Styles --- */
+.toolbar {
+  width: 100vw;
+  background: var(--toolbar-bg);
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.toolbar-btn {
+  background: var(--toolbar-btn-bg);
+  border: none;
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  color: var(--text-primary);
+}
+
+.toolbar-btn:hover {
+  background: var(--toolbar-btn-hover);
+  color: var(--text-primary);
+}
+
+.toolbar-btn svg {
+  display: block;
+}
+
+/* --- End Toolbar Styles --- */
+
 /* --- Markdown Editor Styles --- */
 .markdown-editor-container {
   display: flex;
   flex-direction: row;
   gap: 0;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 0;
   box-shadow: none;
   padding: 0;
@@ -332,6 +442,7 @@ body {
   height: 100vh;
   max-width: none;
   min-height: 0;
+  transition: background-color 0.3s ease;
 }
 
 .markdown-input {
@@ -342,18 +453,19 @@ body {
   font-size: 1rem;
   font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
   border: none;
-  border-right: 1px solid #e9ecef;
+  border-right: 1px solid var(--border-color);
   border-radius: 0;
   padding: 2rem 1.5rem;
   resize: none;
-  background: #fff;
-  transition: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
   box-shadow: none;
 }
 
 .markdown-input:focus {
   outline: none;
-  border-color: #e9ecef;
+  border-color: var(--border-hover);
 }
 
 .markdown-preview {
@@ -361,102 +473,106 @@ body {
   min-width: 0;
   min-height: 100vh;
   height: 100vh;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 0;
   border: none;
-  border-left: 1px solid #e9ecef;
+  border-left: 1px solid var(--border-color);
   padding: 2rem 1.5rem;
   overflow: auto;
   font-size: 1rem;
   font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   box-shadow: none;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
+/* Dark mode styles for markdown content */
+[data-theme="dark"] .markdown-preview h1,
+[data-theme="dark"] .markdown-preview h2,
+[data-theme="dark"] .markdown-preview h3,
+[data-theme="dark"] .markdown-preview h4,
+[data-theme="dark"] .markdown-preview h5,
+[data-theme="dark"] .markdown-preview h6 {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .markdown-preview code {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .markdown-preview pre {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .markdown-preview blockquote {
+  border-left: 4px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .markdown-preview table {
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .markdown-preview th,
+[data-theme="dark"] .markdown-preview td {
+  border-color: var(--border-color);
+}
+
+/* Highlight blocks */
 .md-highlight-red {
   display: block;
-  background: #ffeaea;
-  color: #c0392b;
-  border-left: 5px solid #e74c3c;
-  padding: 0.5em 1em;
-  margin: 0.5em 0;
+  background: var(--highlight-red-bg);
+  color: var(--highlight-red-text);
+  border-left: 5px solid var(--highlight-red-border);
+  padding: 1px 0.4em;
+  margin: 0.05em 0;
   border-radius: 6px;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .md-highlight-green {
   display: block;
-  background: #eaffea;
-  color: #218c3a;
-  border-left: 5px solid #27ae60;
-  padding: 0.5em 1em;
-  margin: 0.5em 0;
+  background: var(--highlight-green-bg);
+  color: var(--highlight-green-text);
+  border-left: 5px solid var(--highlight-green-border);
+  padding: 1px 0.4em;
+  margin: 0.05em 0;
   border-radius: 6px;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .md-highlight-blue {
   display: block;
-  background: #eaf4ff;
-  color: #1a4a7a;
-  border-left: 5px solid #3498db;
-  padding: 0.5em 1em;
-  margin: 0.5em 0;
+  background: var(--highlight-blue-bg);
+  color: var(--highlight-blue-text);
+  border-left: 5px solid var(--highlight-blue-border);
+  padding: 1px 0.4em;
+  margin: 0.05em 0;
   border-radius: 6px;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .md-highlight-yellow {
   display: block;
-  background: #fffbe6;
-  color: #b59f00;
-  border-left: 5px solid #f1c40f;
-  padding: 0.5em 1em;
+  background: var(--highlight-yellow-bg);
+  color: var(--highlight-yellow-text);
+  border-left: 5px solid var(--highlight-yellow-border);
+  padding: 1px 0.5em;
   margin: 0.5em 0;
   border-radius: 6px;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
-
-/* --- Toolbar Styles --- */
-.toolbar {
-  width: 100vw;
-  background: #f7f7fa;
-  display: flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  gap: 0.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.toolbar-btn {
-  background: #f7f7fa;
-  border: none;
-  border-radius: 6px;
-  padding: 0.2rem 0.4rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: background 0.2s;
-  color: #444;
-}
-
-.toolbar-btn:hover {
-  background: #e0e0ef;
-  color: #222;
-}
-
-.toolbar-btn svg {
-  display: block;
-}
-
-/* --- End Toolbar Styles --- */
 
 /* --- Resize Handle Styles --- */
 .resize-handle {
   width: 6px;
-  background: #e0e0e0;
+  background: var(--resize-handle-bg);
   cursor: col-resize;
   position: relative;
   z-index: 10;
@@ -469,28 +585,28 @@ body {
 }
 
 .resize-handle:hover {
-  background: #c0c0c0;
+  background: var(--resize-handle-hover);
 }
 
 .resize-handle:active {
-  background: #a0a0a0;
+  background: var(--resize-handle-hover);
 }
 
 .resize-handle::before {
   content: '';
   width: 2px;
   height: 40px;
-  background: #999;
+  background: var(--resize-indicator);
   border-radius: 1px;
   transition: background-color 0.2s;
 }
 
 .resize-handle:hover::before {
-  background: #666;
+  background: var(--resize-indicator-hover);
 }
 
 .resize-handle:active::before {
-  background: #444;
+  background: var(--resize-indicator-hover);
 }
 
 /* --- End Resize Handle Styles --- */
