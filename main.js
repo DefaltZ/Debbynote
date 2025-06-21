@@ -1,9 +1,95 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
 // Keep a global reference of the window object
 let mainWindow;
+
+//create a menu template
+const isMac = process.platform === 'darwin';
+const template = [
+  ...(isMac ? [{
+    //debbynote app name menu
+    label: app.name,
+    submenu: [
+      {role: 'about'},
+      {type: 'separator'},
+      {role: 'services', submenu: []},
+      {type: 'separator'},
+      {role: 'hide'},
+      {role: 'hideothers'},
+      {role: 'unhide'},
+      {type: 'separator'},
+      {role: 'quit'},
+    ]
+  }] : []),
+  // file menu
+  {
+    label: 'File',
+    submenu: [
+      {role: 'close'},
+      {role: 'quit'},
+    ]
+  },
+  // edit menu
+  {
+    label: 'Edit',
+    submenu: [
+      {role: 'undo'},
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'pasteandmatchstyle' },
+      { role: 'delete' },
+      { role: 'selectall' },
+    ]
+  },
+  // view menu
+  {
+    label: 'View',
+    submenu: [
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' },
+      { type: 'separator' },
+      { role: 'toggleDevTools' },
+      { role: 'forcereload' },
+    ]
+  },
+  // window menu
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'zoom' },
+      ...(isMac
+        ? [
+            { type: 'separator' },
+            { role: 'front' },
+            { type: 'separator' },
+            { role: 'window' }
+          ]
+        : [
+            { role: 'close' }
+          ])
+    ]
+  },
+  // help menu
+  {
+    label: 'Help',
+    submenu: [
+      { role: 'about' },
+      { label: 'Syntax guide', click: () => {}},
+    ]
+  }
+]
+
+// Initialize the menu
+Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
 // Handle save file
 ipcMain.handle('save-file', async (event, { content, activeNote }) => {
