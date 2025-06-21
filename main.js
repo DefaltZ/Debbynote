@@ -6,33 +6,74 @@ const path = require('path');
 let mainWindow;
 
 // Handle save file
-ipcMain.handle('save-file', async (event, content) => {
-  const win = BrowserWindow.getFocusedWindow();
-  const {filePath, canceled} = await dialog.showSaveDialog(win, {
-    title: 'Save Markdown File',
-    defaultPath: path.join(process.env.HOME || process.env.USERPROFILE, 'debbynotes', 'untitled.md'),
-    filters: [
-      { name: 'Markdown Files', extensions: ['md'] }
-    ],
-    properties: ['createDirectory']
-  });
+ipcMain.handle('save-file', async (event, { content, activeNote }) => {
+  const notesDir = path.join(app.getPath('home'), '.debbynotes');
 
-  if (canceled || !filePath) return false;
-  
-  try {
-    // Ensure the directory exists
-    const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
+  // If we are editing an existing note, overwrite it directly.
+  if (activeNote) {
+    const filePath = path.join(notesDir, activeNote);
+    try {
+      await fs.promises.writeFile(filePath, content, 'utf8');
+      console.log(`File overwritten successfully: ${filePath}`);
+      return { success: true, fileName: activeNote };
+    } catch (error) {
+      console.error(`Error overwriting file ${activeNote}:`, error);
+      return { success: false, error: error.message };
     }
-    
-    // Write the file
-    await fs.promises.writeFile(filePath, content, 'utf8');
-    console.log('File saved successfully:', filePath);
-    return true;
+  } 
+  // If it's a new note, show the save dialog.
+  else {
+    const win = BrowserWindow.getFocusedWindow();
+    const { filePath, canceled } = await dialog.showSaveDialog(win, {
+      title: 'Save New Note',
+      defaultPath: path.join(notesDir, 'untitled.md'),
+      filters: [{ name: 'Markdown Files', extensions: ['md'] }],
+      properties: ['createDirectory']
+    });
+
+    if (canceled || !filePath) {
+  
+      return { success: false, canceled: true };
+    }
+
+    try {
+      await fs.promises.writeFile(filePath, content, 'utf8');
+      const fileName = path.basename(filePath);
+      console.log(`File saved successfully: ${filePath}`);
+      return { success: true, fileName: fileName };
+    } catch (error) {
+      console.error('Error saving new file:', error);
+      return { success: false, error: error.message };
+    }
+  }
+});
+
+// Handle get-notes
+ipcMain.handle('get-notes', async () => {
+  const notesDir = path.join(app.getPath('home'), '.debbynotes');
+  try {
+    if (!fs.existsSync(notesDir)) {
+      fs.mkdirSync(notesDir);
+    }
+    const files = await fs.promises.readdir(notesDir);
+    // Filter for markdown files and return
+    return files.filter(file => file.endsWith('.md'));
   } catch (error) {
-    console.error('Error saving file:', error);
-    return false;
+    console.error('Error getting notes:', error);
+    return []; // Return empty array on error
+  }
+});
+
+// Handle open-note
+ipcMain.handle('open-note', async (event, noteName) => {
+  const notesDir = path.join(app.getPath('home'), '.debbynotes');
+  const filePath = path.join(notesDir, noteName);
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf8');
+    return content;
+  } catch (error) {
+    console.error(`Error opening note ${noteName}:`, error);
+    return null; // Return null on error
   }
 });
 
