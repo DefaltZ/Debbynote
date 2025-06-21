@@ -1,13 +1,13 @@
 import React from 'react';
 
-export default function Sidebar({ notes, onNoteSelect, onToggle, isCollapsed }) {
+export default function Sidebar({ notes, onNoteSelect, isVisible }) {
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <button onClick={onToggle} className="sidebar-toggle">
-        {isCollapsed ? '>' : '<'}
-      </button>
+    <div className="sidebar">
       <div className="sidebar-content">
-        
         <ul>
           {notes.map((note) => (
             <li key={note} onClick={() => onNoteSelect(note)}>

@@ -11,12 +11,31 @@ function App() {
   const [activeNote, setActiveNote] = useState(null); // Track the active note's filename
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notes, setNotes] = useState([]);
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Default to visible
 
   // Apply dark mode to body element
   useEffect(() => {
     document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check for Command key (metaKey on macOS)
+      if (e.metaKey) {
+        // Toggle sidebar with Cmd+B
+        if (e.key === 'b' || e.key === 'B') {
+          e.preventDefault();
+          setIsSidebarVisible(prev => !prev);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   // Fetch notes on component mount
   useEffect(() => {
@@ -55,10 +74,6 @@ function App() {
     }
   };
 
-  const handleToggleSidebar = () => {
-    setSidebarCollapsed(!isSidebarCollapsed);
-  };
-
   return (
     <div className="App">
       <Toolbar 
@@ -71,8 +86,7 @@ function App() {
         <Sidebar 
           notes={notes}
           onNoteSelect={handleNoteSelect}
-          onToggle={handleToggleSidebar}
-          isCollapsed={isSidebarCollapsed}
+          isVisible={isSidebarVisible}
         />
         <MarkdownEditor 
           markdown={markdown} 
