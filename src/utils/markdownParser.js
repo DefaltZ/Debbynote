@@ -22,6 +22,12 @@ const debatePositions = {
   '!cg2': { title: 'Closing Government 2nd Speaker', class: 'debate-cg2' },
   '!co1': { title: 'Closing Opposition 1st Speaker', class: 'debate-co1' },
   '!co2': { title: 'Closing Opposition 2nd Speaker', class: 'debate-co2' },
+  '!pm' : { title: 'Prime Minister', class: 'debate-pm' },
+  '!lo' : { title: 'Leader of Opposition', class: 'debate-lo' },
+  '!dpm' : { title: 'Deputy Prime Minister', class: 'debate-dpm' },
+  '!dlo' : { title: 'Deputy Leader of Opposition', class: 'debate-dlo' },
+  '!gw' : { title: 'Government Whip', class: 'debate-gw' },
+  '!ow' : { title: 'Opposition Whip', class: 'debate-ow' },
 };
 
 // Parse textarea value into blocks for custom rendering
@@ -32,7 +38,7 @@ export function parseBlocks(text) {
 
   rawBlocks.forEach(rawBlock => {
     // Check for debate position tokens first
-    const debateMatch = rawBlock.match(/^(!og1|!og2|!oo1|!oo2|!cg1|!cg2|!co1|!co2)\s([\s\S]*)$/i);
+    const debateMatch = rawBlock.match(/^(!og1|!og2|!oo1|!oo2|!cg1|!cg2|!co1|!co2|!pm|!lo|!dpm|!dlo|!gw|!ow)\s([\s\S]*)$/i);
     if (debateMatch) {
       blocks.push({
         type: 'debate',
