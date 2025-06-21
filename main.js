@@ -4,6 +4,7 @@ const path = require('path');
 
 // Keep a global reference of the window object
 let mainWindow;
+let guideWindow = null;
 
 //create a menu template
 const isMac = process.platform === 'darwin';
@@ -83,7 +84,9 @@ const template = [
     label: 'Help',
     submenu: [
       { role: 'about' },
-      { label: 'Syntax guide', click: () => {}},
+      { label: 'Syntax guide', click: () => {
+        createGuideWindow();
+      }},
     ]
   }
 ]
@@ -207,6 +210,35 @@ function createWindow() {
     mainWindow = null;
   });
 }
+
+function createGuideWindow() {
+  if (guideWindow) {
+    guideWindow.focus();
+    return;
+  }
+
+  guideWindow = new BrowserWindow({
+    width: 800,
+    height: 700,
+    icon: path.join(__dirname, 'src/assets/icons/debbynote.png'),
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
+      preload: path.join(__dirname, 'preload.js')
+    },
+  });
+
+  guideWindow.setMenu(null);
+  guideWindow.loadFile(path.join(__dirname, 'src/guideWindow.html'));
+  
+  guideWindow.on('closed', () => {
+    guideWindow = null;
+  });
+}
+
+
+  
 
 // This method will be called when Electron has finished initialization
 app.whenReady().then(createWindow);
