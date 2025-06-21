@@ -1,31 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Toolbar from './components/Toolbar';
 import { getMarkdownHtml } from './utils/markdownParser';
 import { handleBulletKeyDown } from './utils/bulletHandler';
-import { handleFormat } from './utils/formatHandler';
-import { handleSave } from './utils/saveHandler';
 import './styles.css';
 
-function MarkdownEditor() {
-  const [value, setValue] = useState('');
+function MarkdownEditor({ markdown, onChange }) {
   const [editorWidth, setEditorWidth] = useState(50);
   const [isResizing, setIsResizing] = useState(false);
   const textareaRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Formatting handler
-  const onFormat = (type) => {
-    handleFormat(type, value, setValue);
-  };
-
-  // Save handler
-  const onSave = async () => {
-    await handleSave(value);
-  };
-
   // Auto-increment bullet handler
   const onKeyDown = (e) => {
-    handleBulletKeyDown(e, value, setValue);
+    handleBulletKeyDown(e, markdown, onChange);
   };
 
   // Resize handlers
@@ -73,12 +59,12 @@ function MarkdownEditor() {
   }, [isResizing]);
 
   // Get markdown HTML
-  const html = getMarkdownHtml(value);
+  const html = getMarkdownHtml(markdown);
 
   return (
-    <div className="markdown-editor-container" style={{ flexDirection: 'column', padding: 0 }}>
       <div 
         ref={containerRef}
+        className="markdown-editor-container"
         style={{ 
           display: 'flex', 
           flex: 1, 
@@ -94,8 +80,8 @@ function MarkdownEditor() {
         }}>
           <textarea
             className="markdown-input"
-            value={value}
-            onChange={e => setValue(e.target.value)}
+            value={markdown}
+            onChange={e => onChange(e.target.value)}
             onKeyDown={onKeyDown}
             ref={textareaRef}
             style={{ 
@@ -105,7 +91,7 @@ function MarkdownEditor() {
               border: 'none',
               outline: 'none'
             }}
-            
+           
           />
         </div>
         
@@ -146,7 +132,6 @@ function MarkdownEditor() {
           />
         </div>
       </div>
-    </div>
   );
 }
 

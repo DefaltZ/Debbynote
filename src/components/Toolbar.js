@@ -22,6 +22,18 @@ export default function Toolbar({ onFormat, onSave, onToggleDarkMode, isDarkMode
           <path d="M5 19V21H19V19H5ZM12 17C13.1 17 14 16.1 14 15C14 13.9 13.1 13 12 13C10.9 13 10 13.9 10 15C10 16.1 10.9 17 12 17ZM19 5V7H5V5H19Z" fill="currentColor"/>
         </svg>
       </button>
+      <button className="toolbar-btn" title="Underline" onMouseDown={e => { e.preventDefault(); onFormat('underline'); }}>
+        {/* Material UI Underline SVG */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 17C15.31 17 18 14.31 18 11V3H15.5V11C15.5 12.93 13.93 14.5 12 14.5C10.07 14.5 8.5 12.93 8.5 11V3H6V11C6 14.31 8.69 17 12 17ZM5 19V21H19V19H5Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <button className="toolbar-btn" title="Separator" onMouseDown={e => { e.preventDefault(); onFormat('separator'); }}>
+        {/* Material UI Separator SVG */}
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 13H5V11H3V13ZM7 13H9V11H7V13ZM11 13H13V11H11V13ZM15 13H17V11H15V13ZM19 13H21V11H19V13Z" fill="currentColor"/>
+        </svg>
+      </button>
       <div style={{ width: '1px', height: '20px', background: '#ddd', margin: '0 0.5rem' }}></div>
       <button id="saveFile" className="toolbar-btn" title="Save File" onClick={onSave}>
         {/* Material UI Save SVG */}
