@@ -41,19 +41,29 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(__dirname, 'src/assets/icons/debbynote.png'), // Use .png for cross-platform window icon
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, 'assets/icon.png'), // Optional: add an icon
     show: false // Don't show until ready
   });
 
   // Load the app
   const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, 'dist/index.html')}`;
   mainWindow.loadURL(startUrl);
+
+  try {
+    if (process.platform === 'darwin') {
+      app.dock.setIcon(path.join(__dirname, 'src/assets/icons/debbynote.icns'));
+    } else {
+      app.setAppUserModelId('com.debbynote.app');
+    }
+  } catch (error) {
+    console.error('Error setting dock icon:', error);
+  }
 
   // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
