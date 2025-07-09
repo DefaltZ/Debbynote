@@ -237,9 +237,6 @@ function createGuideWindow() {
   });
 }
 
-
-  
-
 // This method will be called when Electron has finished initialization
 app.whenReady().then(createWindow);
 
