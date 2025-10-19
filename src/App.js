@@ -76,22 +76,24 @@ function App() {
 
   return (
     <div className="App">
-      <Toolbar 
-        onFormat={onFormat} 
-        onSave={onSave}
-        onToggleDarkMode={onToggleDarkMode}
-        isDarkMode={isDarkMode}
-      />
-      <div className="main-container">
+      <div className="app-layout">
         <Sidebar 
           notes={notes}
           onNoteSelect={handleNoteSelect}
           isVisible={isSidebarVisible}
         />
-        <MarkdownEditor 
-          markdown={markdown} 
-          onChange={setMarkdown} 
-        />
+        <div className="main-content-area">
+          <Toolbar 
+            onFormat={onFormat} 
+            onSave={onSave}
+            onToggleDarkMode={onToggleDarkMode}
+            isDarkMode={isDarkMode}
+          />
+          <MarkdownEditor 
+            markdown={markdown} 
+            onChange={setMarkdown} 
+          />
+        </div>
       </div>
     </div>
   );
