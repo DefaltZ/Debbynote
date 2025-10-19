@@ -3,23 +3,48 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f9fa;
+  overflow: hidden;
 }
 
 /* App container */
-.app {
+.App {
   height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* App layout container */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main content area (toolbar + editor) */
+.main-content-area {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Header */
@@ -81,9 +106,31 @@ body {
   flex-shrink: 0;
 }
 
+.sidebar-header {
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.new-note-btn {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+.new-note-btn:hover {
+  background: var(--toolbar-btn-hover);
+  transform: scale(1.05);
+}
+
 .sidebar-content {
   padding: 0.5rem;
-  overflow: hidden;
+  overflow-y: auto;
   flex: 1;
 }
 
@@ -162,7 +209,7 @@ body {
 .notes-list {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.2rem;
 }
 
 .notes-list h3 {
@@ -173,26 +220,23 @@ body {
 }
 
 .note-item {
-  background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
+  padding: 0.1rem 0.5rem;
+  margin-bottom: 0.05rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
   position: relative;
+  font-size: 0.875rem;
+  border-radius: 0;
 }
 
 .note-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  background: var(--toolbar-btn-hover);
+  transform: translateY(-1px);
 }
 
 .note-item.selected {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border-color: #667eea;
 }
 
 .note-title {
@@ -304,22 +348,26 @@ body {
 }
 
 /* Scrollbar styling */
-.notes-list::-webkit-scrollbar {
+.notes-list::-webkit-scrollbar,
+.sidebar-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.notes-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.notes-list::-webkit-scrollbar-track,
+.sidebar-content::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
   border-radius: 3px;
 }
 
-.notes-list::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+.notes-list::-webkit-scrollbar-thumb,
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
   border-radius: 3px;
 }
 
-.notes-list::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+.notes-list::-webkit-scrollbar-thumb:hover,
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
 
 /* Responsive design */
@@ -506,26 +554,18 @@ body {
   --debate-ow-border: #9c27b0;
 }
 
-/* Apply theme colors */
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
 /* --- Toolbar Styles --- */
 .toolbar {
-  width: 100vw;
+  width: 100%;
   background: var(--toolbar-bg);
   display: flex;
   align-items: center;
   padding: 0.2rem 0.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   gap: 0.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  flex-shrink: 0;
   transition: background-color 0.3s ease;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .toolbar-btn {
@@ -561,8 +601,9 @@ body {
   box-shadow: none;
   padding: 0;
   margin: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  flex: 1;
   max-width: none;
   min-height: 0;
   transition: background-color 0.3s ease;
@@ -571,8 +612,7 @@ body {
 .markdown-input {
   flex: 1;
   min-width: 0;
-  min-height: 100vh;
-  height: 100vh;
+  height: 100%;
   font-size: 1rem;
   font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
   border: none;
@@ -594,8 +634,7 @@ body {
 .markdown-preview {
   flex: 1;
   min-width: 0;
-  min-height: 100vh;
-  height: 100vh;
+  height: 100%;
   background: var(--bg-primary);
   border-radius: 0;
   border: none;
