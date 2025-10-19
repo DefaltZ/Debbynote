@@ -227,6 +227,9 @@ html, body {
   position: relative;
   font-size: 0.875rem;
   border-radius: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .note-item:hover {
@@ -237,6 +240,19 @@ html, body {
 .note-item.selected {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+}
+
+.file-icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .note-title {
