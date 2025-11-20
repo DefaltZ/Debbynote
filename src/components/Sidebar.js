@@ -1,14 +1,13 @@
 import React from 'react';
+import { handleNewNote as createNewNote } from '../utils/handleNewNote';
 
-export default function Sidebar({ notes, onNoteSelect, isVisible }) {
+export default function Sidebar({ notes, onNoteSelect, isVisible, setMarkdown, setActiveNote, setNotes }) {
   if (!isVisible) {
     return null;
   }
 
   const handleNewNote = () => {
-    // Placeholder for new note functionality
-    // This will be implemented later
-    console.log('New note button clicked');
+    createNewNote(setMarkdown, setActiveNote, setNotes, notes);
   };
 
   return (

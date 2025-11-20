@@ -3,7 +3,6 @@ import MarkdownEditor from './MarkdownEditor';
 import Toolbar from './components/Toolbar';
 import Sidebar from './components/Sidebar';
 import { handleFormat } from './utils/formatHandler';
-import { handleSave } from './utils/saveHandler';
 import './styles.css';
 
 function App() {
@@ -51,14 +50,45 @@ function App() {
   };
 
   const onSave = async () => {
-    const result = await window.electronAPI.saveFile({ content: markdown, activeNote });
-    if (result.success) {
-      // If a new file was saved, update the active note and refresh the list
-      if (result.fileName !== activeNote) {
-        setActiveNote(result.fileName);
-        const fetchedNotes = await window.electronAPI.getNotes();
+    try {
+      const result = await window.electronAPI.saveFile({ content: markdown, activeNote });
+
+      if (result?.canceled) {
+        console.log('Save cancelled by user');
+        return;
+      }
+
+      if (!result?.success) {
+        console.error('Save failed', result?.error || 'Unknown error');
+        return;
+      }
+
+      const savedName = result.fileName || activeNote || 'untitled.md';
+      console.log('File saved successfully in npm console:', savedName);
+
+      setActiveNote(savedName);
+      setNotes(prevNotes => {
+        if (!Array.isArray(prevNotes) || !prevNotes.length) {
+          return [savedName];
+        }
+
+        const renamed = prevNotes.map(note =>
+          note === 'untitled' ? savedName : note
+        );
+
+        if (!renamed.includes(savedName)) {
+          renamed.push(savedName);
+        }
+
+        return renamed;
+      });
+
+      const fetchedNotes = await window.electronAPI.getNotes();
+      if (Array.isArray(fetchedNotes)) {
         setNotes(fetchedNotes);
       }
+    } catch (error) {
+      console.error('Error during save operation:', error);
     }
   };
 
@@ -81,6 +111,9 @@ function App() {
           notes={notes}
           onNoteSelect={handleNoteSelect}
           isVisible={isSidebarVisible}
+          setMarkdown={setMarkdown}
+          setActiveNote={setActiveNote}
+          setNotes={setNotes}
         />
         <div className="main-content-area">
           <Toolbar 
