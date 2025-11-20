@@ -98,42 +98,35 @@ Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 ipcMain.handle('save-file', async (event, { content, activeNote }) => {
   const notesDir = path.join(app.getPath('home'), '.debbynotes');
 
-  // If we are editing an existing note, overwrite it directly.
-  if (activeNote) {
-    const filePath = path.join(notesDir, activeNote);
-    try {
-      await fs.promises.writeFile(filePath, content, 'utf8');
-      console.log(`File overwritten successfully: ${filePath}`);
-      return { success: true, fileName: activeNote };
-    } catch (error) {
-      console.error(`Error overwriting file ${activeNote}:`, error);
-      return { success: false, error: error.message };
-    }
-  } 
-  // If it's a new note, show the save dialog.
-  else {
-    const win = BrowserWindow.getFocusedWindow();
-    const { filePath, canceled } = await dialog.showSaveDialog(win, {
-      title: 'Save New Note',
-      defaultPath: path.join(notesDir, 'untitled.md'),
-      filters: [{ name: 'Markdown Files', extensions: ['md'] }],
-      properties: ['createDirectory']
-    });
+  if (!fs.existsSync(notesDir)) {
+    fs.mkdirSync(notesDir, { recursive: true });
+  }
 
-    if (canceled || !filePath) {
-  
-      return { success: false, canceled: true };
-    }
+  const win = BrowserWindow.getFocusedWindow();
+  const suggestedName = activeNote && activeNote !== 'untitled' ? activeNote : 'untitled.md';
 
-    try {
-      await fs.promises.writeFile(filePath, content, 'utf8');
-      const fileName = path.basename(filePath);
-      console.log(`File saved successfully: ${filePath}`);
-      return { success: true, fileName: fileName };
-    } catch (error) {
-      console.error('Error saving new file:', error);
-      return { success: false, error: error.message };
-    }
+  const { filePath, canceled } = await dialog.showSaveDialog(win, {
+    title: 'Save Note',
+    defaultPath: path.join(notesDir, suggestedName.endsWith('.md') ? suggestedName : `${suggestedName}.md`),
+    filters: [{ name: 'Markdown Files', extensions: ['md'] }],
+    properties: ['createDirectory', 'showOverwriteConfirmation']
+  });
+
+  if (canceled || !filePath) {
+    console.log('Save cancelled by user');
+    return { success: false, canceled: true };
+  }
+
+  const finalPath = path.extname(filePath).toLowerCase() === '.md' ? filePath : `${filePath}.md`;
+
+  try {
+    await fs.promises.writeFile(finalPath, content, 'utf8');
+    const fileName = path.basename(finalPath);
+    console.log(`File saved successfully in npm console: ${finalPath}`);
+    return { success: true, fileName };
+  } catch (error) {
+    console.error('Error saving file:', error);
+    return { success: false, error: error.message };
   }
 });
 
