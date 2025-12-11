@@ -7,7 +7,7 @@
  */
 export const handleNewNote = async (setMarkdown, setActiveNote, setNotes, notes) => {
   try {
-    // Clear the editor content
+    // Clear the editor content first - this ensures a clean slate
     setMarkdown('');
     
     // Set active note to "untitled" (will be updated when saved)
@@ -18,7 +18,6 @@ export const handleNewNote = async (setMarkdown, setActiveNote, setNotes, notes)
       setNotes([...notes, 'untitled']);
     }
     
-    console.log('New note created: untitled');
   } catch (error) {
     console.error('Error creating new note:', error);
   }
