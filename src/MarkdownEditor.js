@@ -96,26 +96,9 @@ function MarkdownEditor({ markdown, onChange }) {
         </div>
         
         <div 
-          style={{
-            width: '8px',
-            background: '#ddd',
-            cursor: 'col-resize',
-            position: 'relative',
-            zIndex: 1000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}
+          className="resize-handle"
           onMouseDown={startResize}
-        >
-          <div style={{
-            width: '2px',
-            height: '50px',
-            background: '#999',
-            borderRadius: '1px'
-          }} />
-        </div>
+        />
         
         <div style={{ 
           width: `${100 - editorWidth}%`,

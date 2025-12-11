@@ -3,6 +3,7 @@ import MarkdownEditor from './MarkdownEditor';
 import Toolbar from './components/Toolbar';
 import Sidebar from './components/Sidebar';
 import { handleFormat } from './utils/formatHandler';
+import { handleNewNote as createNewNote } from './utils/handleNewNote';
 import './styles.css';
 
 function App() {
@@ -111,8 +112,19 @@ function App() {
     }
   };
 
+  const handleNewNote = () => {
+    createNewNote(setMarkdown, setActiveNote, setNotes, notes);
+  };
+
   return (
     <div className="App">
+      <Toolbar 
+        onFormat={onFormat} 
+        onSave={onSave}
+        onToggleDarkMode={onToggleDarkMode}
+        isDarkMode={isDarkMode}
+        onNewNote={handleNewNote}
+      />
       <div className="app-layout">
         <Sidebar 
           notes={notes}
@@ -123,12 +135,6 @@ function App() {
           setNotes={setNotes}
         />
         <div className="main-content-area">
-          <Toolbar 
-            onFormat={onFormat} 
-            onSave={onSave}
-            onToggleDarkMode={onToggleDarkMode}
-            isDarkMode={isDarkMode}
-          />
           <MarkdownEditor 
             markdown={markdown} 
             onChange={setMarkdown} 
