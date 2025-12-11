@@ -97,6 +97,13 @@ function App() {
   };
 
   const handleNoteSelect = async (noteName) => {
+    // Special handling for 'untitled' - don't load from disk, just clear the editor
+    if (noteName === 'untitled') {
+      setMarkdown('');
+      setActiveNote('untitled');
+      return;
+    }
+    
     const content = await window.electronAPI.openNote(noteName);
     if (content !== null) {
       setMarkdown(content);
