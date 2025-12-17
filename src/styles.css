@@ -150,9 +150,10 @@ html, body {
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-shrink: 0;
   transition: background-color 0.3s ease;
+  position: relative;
 }
 
 .sidebar-content {
@@ -161,6 +162,51 @@ html, body {
   flex: 1;
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-resize-handle {
+  width: 4px;
+  background: transparent;
+  cursor: col-resize;
+  position: relative;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  user-select: none;
+  margin-right: -2px;
+}
+
+.sidebar-resize-handle:hover {
+  background: var(--resize-handle-bg);
+}
+
+.sidebar-resize-handle:active {
+  background: var(--resize-handle-hover);
+}
+
+.sidebar-resize-handle::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+  border-radius: 1px;
+  transform: translateX(-50%);
+  transition: all 0.2s ease;
+}
+
+.sidebar-resize-handle:hover::before {
+  background: var(--resize-indicator);
+}
+
+.sidebar-resize-handle:active::before {
+  background: var(--resize-indicator-hover);
+  width: 3px;
 }
 
 .sidebar h2 {
