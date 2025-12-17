@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import '../styles.css';
 
-export default function StatusLine({ markdown }) {
+export default function StatusLine({ markdown, activeNote }) {
   // Calculate word count and character count
   const { wordCount, charCount } = useMemo(() => {
     const text = markdown || '';
@@ -12,9 +12,15 @@ export default function StatusLine({ markdown }) {
     return { wordCount, charCount };
   }, [markdown]);
 
+  // Get display name for active note
+  const displayName = activeNote || 'Untitled';
+
   return (
     <div className="status-line">
       <div className="status-line-content">
+        <div className="status-line-left">
+          <span className="status-item">{displayName}</span>
+        </div>
         <div className="status-line-right">
           <span className="status-item">{wordCount} words</span>
           <span className="status-separator">|</span>

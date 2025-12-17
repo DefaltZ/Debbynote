@@ -140,7 +140,7 @@ function App() {
             markdown={markdown} 
             onChange={setMarkdown} 
           />
-          <StatusLine markdown={markdown} />
+          <StatusLine markdown={markdown} activeNote={activeNote} />
         </div>
       </div>
     </div>
