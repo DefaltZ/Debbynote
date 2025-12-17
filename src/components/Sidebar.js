@@ -1,12 +1,58 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-export default function Sidebar({ notes, onNoteSelect, isVisible, setMarkdown, setActiveNote, setNotes }) {
+export default function Sidebar({ notes, onNoteSelect, isVisible, setMarkdown, setActiveNote, setNotes, width, onWidthChange }) {
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef(null);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
+
+  const MIN_WIDTH = 100;
+  const MAX_WIDTH = 400;
+
+  const startResize = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    startXRef.current = e.clientX;
+    startWidthRef.current = width;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e) => {
+      const diff = e.clientX - startXRef.current;
+      const newWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, startWidthRef.current + diff));
+      onWidthChange(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, onWidthChange]);
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <div className="sidebar">
+    <div 
+      ref={sidebarRef}
+      className="sidebar" 
+      style={{ width: `${width}px` }}
+    >
       <div className="sidebar-content">
         <ul>
           {notes.map((note) => (
@@ -26,6 +72,10 @@ export default function Sidebar({ notes, onNoteSelect, isVisible, setMarkdown, s
           ))}
         </ul>
       </div>
+      <div 
+        className="sidebar-resize-handle"
+        onMouseDown={startResize}
+      />
     </div>
   );
 }

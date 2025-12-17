@@ -13,6 +13,7 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notes, setNotes] = useState([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true); // Default to visible
+  const [sidebarWidth, setSidebarWidth] = useState(220); // Default sidebar width
 
   // Apply dark mode to body element
   useEffect(() => {
@@ -134,6 +135,8 @@ function App() {
           setMarkdown={setMarkdown}
           setActiveNote={setActiveNote}
           setNotes={setNotes}
+          width={sidebarWidth}
+          onWidthChange={setSidebarWidth}
         />
         <div className="main-content-area">
           <MarkdownEditor 
