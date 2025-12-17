@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MarkdownEditor from './MarkdownEditor';
 import Toolbar from './components/Toolbar';
 import Sidebar from './components/Sidebar';
+import StatusLine from './components/StatusLine';
 import { handleFormat } from './utils/formatHandler';
 import { handleNewNote as createNewNote } from './utils/handleNewNote';
 import './styles.css';
@@ -139,6 +140,7 @@ function App() {
             markdown={markdown} 
             onChange={setMarkdown} 
           />
+          <StatusLine markdown={markdown} />
         </div>
       </div>
     </div>
